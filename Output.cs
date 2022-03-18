@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ModsCsvExporter
+namespace CsvModsExporter
 {
     internal static class Output
     {
@@ -32,19 +33,17 @@ namespace ModsCsvExporter
             throw new NotImplementedException();
         }
 
-        internal static void ExportMods(List<ModInfo> allMods, bool autoOpen)
+        internal static void ExportMods(List<ModInfo> allMods, bool autoOpen, string outputFile)
         {
             //clean up mod versions
             CleanModDetails(ref allMods);
 
-            string outputFile = ".\\" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
             using (var writer = new StreamWriter(outputFile))
             {
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<ModInfoMap>();
-                    csv.WriteRecords(allMods);
-                }
+                CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+                csv.Context.RegisterClassMap<ModInfoMap>();
+                csv.WriteRecords(allMods);
+                csv.Dispose();
             }
 
             if (autoOpen)
@@ -55,8 +54,6 @@ namespace ModsCsvExporter
         {
             public ModInfoMap()
             {
-                AutoMap(CultureInfo.InvariantCulture);
-
                 //order relevant columns
                 Map(m => m.Name).Index(0);
                 Map(m => m.Version).Index(1);

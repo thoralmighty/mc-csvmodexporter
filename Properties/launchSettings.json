@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ModsCsvExporter": {
-      "commandName": "Project",
-      "workingDirectory": "D:\\MultiMC\\instances\\1.12.2\\.minecraft\\mods"
-    }
-  }
-}

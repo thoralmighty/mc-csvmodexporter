@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvModExporter", "CsvModExporter.csproj", "{1F3D05CA-0910-4D56-90E8-7A6A94A283B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvModsExporter", "CsvModsExporter.csproj", "{732E6707-DB5C-4DA3-AE4E-FEDD70B30103}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1F3D05CA-0910-4D56-90E8-7A6A94A283B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F3D05CA-0910-4D56-90E8-7A6A94A283B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F3D05CA-0910-4D56-90E8-7A6A94A283B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F3D05CA-0910-4D56-90E8-7A6A94A283B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{732E6707-DB5C-4DA3-AE4E-FEDD70B30103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{732E6707-DB5C-4DA3-AE4E-FEDD70B30103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{732E6707-DB5C-4DA3-AE4E-FEDD70B30103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{732E6707-DB5C-4DA3-AE4E-FEDD70B30103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {99D8DCB3-66B1-47CD-B0E7-2A3EEC3828C2}
+		SolutionGuid = {5884A2CD-60AA-4A31-8978-FEBB31D08BE4}
 	EndGlobalSection
 EndGlobal
