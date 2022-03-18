@@ -44,10 +44,9 @@ namespace CsvModsExporter
         public List<string> Dependencies { get; set; }
         [ModInfoConf(Hidden = true)]
         public List<string> Screenshots { get; set; }
-        [ModInfoConf(Name = "Dependencies")]
-
+        [ModInfoConf(Name = "Dependencies", IsChecked = false)]
         public string DependenciesList => Dependencies != null ? string.Join(", ", Dependencies.ToArray()) : string.Empty;
-        [ModInfoConf(Name = "Screenshots")]
+        [ModInfoConf(Name = "Screenshots", IsChecked = false)]
         public string ScreenshotsList => Screenshots != null ? string.Join(", ", Screenshots.ToArray()) : string.Empty;
 
         // -----------------
@@ -55,16 +54,16 @@ namespace CsvModsExporter
         internal FileInfo JarFile = null;
         private List<string> AvailableFor = new List<string>();
 
-        [ModInfoConf("Available For Versions")]
+        [ModInfoConf("Available For Versions", IsChecked = true)]
         public string AvailableForVersions => AvailableFor != null ? string.Join(", ", AvailableFor.ToArray()) : "";
 
-        [ModInfoConf("Actual Size")]
+        [ModInfoConf("Actual Size", IsChecked = true)]
         public string ActualFileSize => JarFile != null ? JarFile.Length+"" : "";
 
-        [ModInfoConf("File Size")]
+        [ModInfoConf("File Size", IsChecked = true)]
         public string FileSize => JarFile != null ? BytesToString(JarFile.Length) : "";
 
-        [ModInfoConf("JAR Name")]
+        [ModInfoConf("JAR Name", IsChecked = true)]
         public string ActualFileName => JarFile?.Name ?? "";
 
         internal void SetJarFile(FileInfo jarFile)

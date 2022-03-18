@@ -51,16 +51,21 @@ namespace CsvModsExporter
                 bool shouldCheck = false;
                 bool shouldHide = false;
 
+                bool attrFound = false;
                 foreach (object attr in attrs)
                 {
                     ModInfoConfAttribute confAttr = attr as ModInfoConfAttribute;
                     if (confAttr != null)
                     {
+                        attrFound = true;
                         if (confAttr.Name?.Length > 0) readablePropName = confAttr.Name;
                         shouldCheck = confAttr.IsChecked;
                         shouldHide = confAttr.Hidden;
                     }
                 }
+
+                if(!attrFound)
+                    shouldCheck = true;
 
                 if (shouldHide) continue;
 
@@ -124,20 +129,10 @@ namespace CsvModsExporter
         /// </summary>
         string[] FindModJars(string path)
         {
-            DirectoryInfo thisDirectory = new DirectoryInfo(path);
-            DirectoryInfo modsDirectory = thisDirectory.GetDirectories().FirstOrDefault(d => d.Name == "mods");
-
-            if (modsDirectory != null)
-            {
-                return Directory.GetFiles(modsDirectory.FullName, "*.jar");
-            }
-            else
-            {
-                return Directory.GetFiles(".", "*.jar");
-            }
+            return Directory.GetFiles(path, "*.jar");
         }
 
-        internal void Run(string path, string saveAs = null)
+        internal void Run(string path, bool autoOpen, string saveAs = null)
         {
             Console.WriteLine("Reading mods...");
 
@@ -194,7 +189,7 @@ namespace CsvModsExporter
 
             Console.WriteLine(allMods.Count + " mods found!");
 
-            Output.ExportMods(allMods, checkBox1.Checked, saveAs); //Environment.GetCommandLineArgs().Contains("/open");
+            Output.ExportMods(allMods, autoOpen, saveAs); //Environment.GetCommandLineArgs().Contains("/open");
 
         }
 
@@ -264,15 +259,9 @@ namespace CsvModsExporter
                 return;
             }
 
-            if (checkBox2.Checked == false)
-            {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.InitialDirectory = (textBox1.Text);
-            }
-
             string targetFile = textBox1.Text + "\\" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
 
-            if (checkBox2.Checked == true)
+            if (checkBox2.Checked == false)
             {
                 if (saveFileDialog1 == null)
                 {
@@ -280,14 +269,18 @@ namespace CsvModsExporter
                     {
                         Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
                         InitialDirectory = textBox1.Text,
-                        Title = "Save as"
+                        Title = "Save as",
+                        FileName = new FileInfo(targetFile).Name,
                     };
                 }
+
                 if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                     return;
+
+                targetFile = saveFileDialog1.FileName;
             }
 
-            Run(textBox1.Text);
+            Run(textBox1.Text, checkBox1.Checked, targetFile);
         }
 
         private void button6_Click(object sender, EventArgs e)
