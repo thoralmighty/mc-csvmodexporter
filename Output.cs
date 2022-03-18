@@ -27,12 +27,12 @@ namespace ModsCsvExporter
             }
         }
 
-        internal static void PackageMods(List<ModInfo> allMods)
+        internal static void PackageMods(List<ModInfo> allMods, bool autoOpen)
         {
             throw new NotImplementedException();
         }
 
-        internal static void ExportMods(List<ModInfo> allMods)
+        internal static void ExportMods(List<ModInfo> allMods, bool autoOpen)
         {
             //clean up mod versions
             CleanModDetails(ref allMods);
@@ -47,7 +47,8 @@ namespace ModsCsvExporter
                 }
             }
 
-            Process.Start("explorer", outputFile);
+            if (autoOpen)
+                Process.Start("explorer", outputFile);
         }
 
         public sealed class ModInfoMap : ClassMap<ModInfo>

@@ -108,7 +108,7 @@ foreach (var row in table)
 Console.WriteLine();
 Console.WriteLine(allMods.Count + " mods found!");
 
-Output.ExportMods(allMods);
+Output.ExportMods(allMods, Environment.GetCommandLineArgs().Contains("/open"));
 
 //Console.WriteLine("Do you wish to [E]xport a manifest, [P]ackage, [B]oth or [C]ancel?: ");
 
