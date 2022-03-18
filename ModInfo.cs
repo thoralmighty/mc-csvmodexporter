@@ -34,7 +34,7 @@ namespace CsvModsExporter
         [ModInfoConf("Author List")]
         public List<string> AuthorList { get; set; }
         public string Description { get; set; }
-        [ModInfoConf(Name = "LogoFile", IsChecked = false)]
+        [ModInfoConf(Name = "Logo Image File", Hidden = true, IsChecked = false)]
         public string LogoFile { get; set; }
         [ModInfoConf(Name = "Update URL", IsChecked = false)]
         public string UpdateUrl { get; set; }
@@ -46,7 +46,7 @@ namespace CsvModsExporter
         public List<string> Screenshots { get; set; }
         [ModInfoConf(Name = "Dependencies", IsChecked = false)]
         public string DependenciesList => Dependencies != null ? string.Join(", ", Dependencies.ToArray()) : string.Empty;
-        [ModInfoConf(Name = "Screenshots", IsChecked = false)]
+        [ModInfoConf(Name = "Screenshots", Hidden = true, IsChecked = false)]
         public string ScreenshotsList => Screenshots != null ? string.Join(", ", Screenshots.ToArray()) : string.Empty;
 
         // -----------------

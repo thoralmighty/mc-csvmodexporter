@@ -71,7 +71,7 @@ namespace CsvModsExporter
 
                 if (useSaved == true && lastSettings != null)
                 {
-                    shouldCheck = lastSettings.List.FirstOrDefault(c => c.PropertyName == prop.Name)?.Checked == true;
+                    shouldCheck = lastSettings.PropertyList.FirstOrDefault(c => c.PropertyName == prop.Name)?.Checked == true;
                 }
 
                 ListViewItem item = listView1.Items.Add(readablePropName);
@@ -259,7 +259,7 @@ namespace CsvModsExporter
                 return;
             }
 
-            string targetFile = textBox1.Text + "\\" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
+            string targetFile = textBox1.Text + "\\" + "modlist-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
 
             if (checkBox2.Checked == false)
             {
@@ -341,8 +341,8 @@ namespace CsvModsExporter
 
             SettingsObject settings = JsonConvert.DeserializeObject<SettingsObject>(File.ReadAllText(settingsFile));
             textBox1.Text = settings.Text;
-            checkBox1.Checked = settings.Checked1;
-            checkBox2.Checked = settings.Checked2;
+            checkBox1.Checked = settings.AutoOpen;
+            checkBox2.Checked = settings.SaveToModsFolder;
             lastSettings = settings;
         }
 
@@ -407,17 +407,17 @@ namespace CsvModsExporter
         {
         }
 
-        public SettingsObject(string text, bool checked1, bool checked2, List<ListViewChoice> list)
+        public SettingsObject(string text, bool autoOpen, bool saveToModsFolder, List<ListViewChoice> propertyList)
         {
             Text = text;
-            Checked1 = checked1;
-            Checked2 = checked2;
-            List = list;
+            AutoOpen = autoOpen;
+            SaveToModsFolder = saveToModsFolder;
+            PropertyList = propertyList;
         }
 
         public string Text { get; set; }
-        public bool Checked1 { get; set; }
-        public bool Checked2 { get; set; }
-        public List<ListViewChoice> List { get; set; }
+        public bool AutoOpen { get; set; }
+        public bool SaveToModsFolder { get; set; }
+        public List<ListViewChoice> PropertyList { get; set; }
     }
 }
