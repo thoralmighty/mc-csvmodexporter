@@ -33,15 +33,19 @@ namespace CsvModsExporter
             throw new NotImplementedException();
         }
 
-        internal static void ExportMods(List<ModInfo> allMods, bool autoOpen, string outputFile)
+        internal static void ExportMods(List<ModInfo> allMods, List<string> properties, bool autoOpen, string outputFile)
         {
             //clean up mod versions
             CleanModDetails(ref allMods);
 
+            if (properties == null)
+                properties = new List<string>();
+
             using (var writer = new StreamWriter(outputFile))
             {
                 CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-                csv.Context.RegisterClassMap<ModInfoMap>();
+                ModInfoMap map = new ModInfoMap(properties);
+                csv.Context.RegisterClassMap(map);
                 csv.WriteRecords(allMods);
                 csv.Dispose();
             }
@@ -52,7 +56,7 @@ namespace CsvModsExporter
 
         public sealed class ModInfoMap : ClassMap<ModInfo>
         {
-            public ModInfoMap()
+            public ModInfoMap(List<string> propertiesToInclude)
             {
                 //order relevant columns
                 Map(m => m.Name).Index(0);
@@ -81,6 +85,15 @@ namespace CsvModsExporter
                 Map(m => m.Credits).Ignore();
                 Map(m => m.Dependencies).Ignore();
                 Map(m => m.UpdateUrl).Ignore();
+
+                //ignore unwanted properties
+                foreach (var prop in typeof(ModInfo).GetProperties())
+                {
+                    if (!propertiesToInclude.Contains(prop.Name))
+                    {
+                        Map(typeof(ModInfo), prop).Ignore();
+                    }
+                }
             }
         }
     }

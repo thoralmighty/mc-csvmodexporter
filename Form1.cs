@@ -173,30 +173,6 @@ namespace CsvModsExporter
 
             allMods = allMods.OrderBy(x => x.Name).ToList();
 
-            //int columnWidth = table?.Max(p => p.Max(i => i.Length)) + 5;
-
-            //foreach (var row in table)
-            //{
-            //    string thisRow = "";
-            //    foreach (var cell in row)
-            //    {
-            //        thisRow += cell.Substring(0, Math.Min(cell.Length, columnWidth));
-
-            //        int difference = (columnWidth - cell.Length);
-
-            //        if (difference <= 0)
-            //        {
-            //            thisRow = thisRow.Substring(0, thisRow.Length - 3) + "... ";
-            //        }
-
-            //        if (difference > 0)
-            //        {
-            //            thisRow += new string(' ', difference + 1);
-            //        }
-            //    }
-            //    Console.WriteLine(thisRow);
-            //}
-
             Console.WriteLine(allMods.Count + " mods found!");
 
             if (errorJars.Count > 0)
@@ -217,7 +193,7 @@ namespace CsvModsExporter
                 }
             }
 
-            Output.ExportMods(allMods, autoOpen, saveAs); //Environment.GetCommandLineArgs().Contains("/open");
+            Output.ExportMods(allMods, GetListViewChoices().Where(i => i.Checked).Select(i => i.PropertyName).ToList(), autoOpen, saveAs); //Environment.GetCommandLineArgs().Contains("/open");
 
         }
 
