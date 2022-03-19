@@ -141,23 +141,33 @@ namespace CsvModsExporter
 
             string[] fileList = FindModJars(path);
 
+            Dictionary<string, Exception> errorJars = new Dictionary<string, Exception>();
+
             foreach (var file in fileList)
             {
                 FileInfo jarFile = new FileInfo(file);
-                IEnumerable<ModInfo> modsInFile = GetMetadata(file);
 
-                if (modsInFile == null) continue;
-
-                foreach (ModInfo mod in modsInFile)
+                try
                 {
-                    string name = (mod?.Name?.Length > 0 ? mod.Name : $"({jarFile.Name})");
+                    IEnumerable<ModInfo> modsInFile = GetMetadata(file);
 
-                    table.Add(new string[] { name, mod?.Version ?? "" });
+                    if (modsInFile == null) continue;
 
-                    mod?.SetJarFile(jarFile);
-                    mod?.TryGetAvailableFor();
+                    foreach (ModInfo mod in modsInFile)
+                    {
+                        string name = (mod?.Name?.Length > 0 ? mod.Name : $"({jarFile.Name})");
 
-                    if (mod != null) allMods.Add(mod);
+                        table.Add(new string[] { name, mod?.Version ?? "" });
+
+                        mod?.SetJarFile(jarFile);
+                        mod?.TryGetAvailableFor();
+
+                        if (mod != null) allMods.Add(mod);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorJars.Add(jarFile.Name, ex);
                 }
             }
 
@@ -189,6 +199,24 @@ namespace CsvModsExporter
 
             Console.WriteLine(allMods.Count + " mods found!");
 
+            if (errorJars.Count > 0)
+            {
+                switch (MessageBox.Show("Failed to read " + errorJars.Count + " JAR(s) which will not be included.\nReview them before continuing?", "Errors encountered", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
+                {
+                    case DialogResult.Yes:
+                        frmErrors frmErrors = new frmErrors(errorJars);
+                        if (frmErrors.ShowDialog() == DialogResult.Cancel)
+                            return;
+                        break;
+
+                    case DialogResult.No:
+                        break;
+
+                    case DialogResult.Cancel:
+                        return;
+                }
+            }
+
             Output.ExportMods(allMods, autoOpen, saveAs); //Environment.GetCommandLineArgs().Contains("/open");
 
         }
@@ -204,8 +232,8 @@ namespace CsvModsExporter
                 dialog.Description = "Select your Minecraft instance, .minecraft or mods folder:";
             }
 
-            if (textBox1.Text.Trim()?.Length > 0 && Directory.Exists(textBox1.Text))
-                dialog.SelectedPath = textBox1.Text;
+            if (txtPath.Text.Trim()?.Length > 0 && Directory.Exists(txtPath.Text))
+                dialog.SelectedPath = txtPath.Text;
 
             if (dialog.ShowDialog() == DialogResult.Cancel)
                 return;
@@ -216,7 +244,7 @@ namespace CsvModsExporter
                     return;
             }
 
-            textBox1.Text = dialog.SelectedPath;
+            txtPath.Text = dialog.SelectedPath;
         }
 
         private bool IsModsFolder(string selectedPath)
@@ -253,22 +281,22 @@ namespace CsvModsExporter
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(textBox1.Text))
+            if (!Directory.Exists(txtPath.Text))
             {
                 MessageBox.Show("Invalid mods folder!", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            string targetFile = textBox1.Text + "\\" + "modlist-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
+            string targetFile = txtPath.Text + "\\" + "modlist-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".csv";
 
-            if (checkBox2.Checked == false)
+            if (cbSaveToModsFolder.Checked == false)
             {
                 if (saveFileDialog1 == null)
                 {
                     saveFileDialog1 = new SaveFileDialog()
                     {
                         Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
-                        InitialDirectory = textBox1.Text,
+                        InitialDirectory = txtPath.Text,
                         Title = "Save as",
                         FileName = new FileInfo(targetFile).Name,
                     };
@@ -280,7 +308,11 @@ namespace CsvModsExporter
                 targetFile = saveFileDialog1.FileName;
             }
 
-            Run(textBox1.Text, checkBox1.Checked, targetFile);
+#if DEBUG
+            SaveSettings();
+#endif
+
+            Run(txtPath.Text, cbAutoOpen.Checked, targetFile);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -310,7 +342,7 @@ namespace CsvModsExporter
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            button2.Enabled = textBox1.Text.Length >= 3;
+            button2.Enabled = txtPath.Text.Length >= 3;
             anythingChanged = true;
         }
 
@@ -327,7 +359,7 @@ namespace CsvModsExporter
 
         private void SaveSettings()
         {
-            SettingsObject settings = new SettingsObject(textBox1.Text, checkBox1.Checked, checkBox2.Checked, GetListViewChoices());
+            SettingsObject settings = new SettingsObject(txtPath.Text, cbAutoOpen.Checked, cbSaveToModsFolder.Checked, GetListViewChoices());
             File.WriteAllText(settingsFile, JsonConvert.SerializeObject(settings));
         }
 
@@ -335,14 +367,14 @@ namespace CsvModsExporter
         {
             if (!File.Exists(settingsFile))
             {
-                button8.Enabled = false;
+                btnRestoreSaved.Enabled = false;
                 return;
             }
 
             SettingsObject settings = JsonConvert.DeserializeObject<SettingsObject>(File.ReadAllText(settingsFile));
-            textBox1.Text = settings.Text;
-            checkBox1.Checked = settings.AutoOpen;
-            checkBox2.Checked = settings.SaveToModsFolder;
+            txtPath.Text = settings.Path;
+            cbAutoOpen.Checked = settings.AutoOpen;
+            cbSaveToModsFolder.Checked = settings.SaveToModsFolder;
             lastSettings = settings;
         }
 
@@ -409,13 +441,13 @@ namespace CsvModsExporter
 
         public SettingsObject(string text, bool autoOpen, bool saveToModsFolder, List<ListViewChoice> propertyList)
         {
-            Text = text;
+            Path = text;
             AutoOpen = autoOpen;
             SaveToModsFolder = saveToModsFolder;
             PropertyList = propertyList;
         }
 
-        public string Text { get; set; }
+        public string Path { get; set; }
         public bool AutoOpen { get; set; }
         public bool SaveToModsFolder { get; set; }
         public List<ListViewChoice> PropertyList { get; set; }

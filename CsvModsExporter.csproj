@@ -87,6 +87,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmErrors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmErrors.Designer.cs">
+      <DependentUpon>frmErrors.cs</DependentUpon>
+    </Compile>
     <Compile Include="LinqExtension.cs" />
     <Compile Include="ListBoxExtension.cs" />
     <Compile Include="ModInfo.cs" />
@@ -97,6 +103,9 @@
     <Compile Include="UpdateInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmErrors.resx">
+      <DependentUpon>frmErrors.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
